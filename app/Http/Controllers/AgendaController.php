@@ -2,27 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Reporte;
+use App\Models\Agenda;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
-class ReporteController extends Controller
+class AgendaController extends Controller
 {
     public function index(): JsonResponse
     {
         try {
-            $reportes = Reporte::with('cita')->get();
+            $agendas = Agenda::with('profesional')->get();
             
             return response()->json([
                 'success' => true,
-                'message' => 'Reportes obtenidos correctamente',
-                'data' => $reportes
+                'message' => 'Agendas obtenidas correctamente',
+                'data' => $agendas
             ], 200);
             
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al obtener reportes',
+                'message' => 'Error al obtener agendas',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -32,16 +32,16 @@ class ReporteController extends Controller
     {
         try {
             $validated = $request->validate([
-                'id_cita' => 'required|integer|exists:citas,id_cita',
+                'fecha_agenda' => 'required|date',
+                'id_profesional' => 'required|integer|exists:usuarios,id',
             ]);
 
-            $reporte = Reporte::create($validated);
-            $reporte->load('cita');
+            $agenda = Agenda::create($validated);
 
             return response()->json([
                 'success' => true,
-                'message' => 'Reporte creado correctamente',
-                'data' => $reporte
+                'message' => 'Agenda creada correctamente',
+                'data' => $agenda
             ], 201);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -54,7 +54,7 @@ class ReporteController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al crear reporte',
+                'message' => 'Error al crear agenda',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -63,18 +63,18 @@ class ReporteController extends Controller
     public function show($id): JsonResponse
     {
         try {
-            $reporte = Reporte::with('cita')->findOrFail($id);
+            $agenda = Agenda::with('profesional')->findOrFail($id);
             
             return response()->json([
                 'success' => true,
-                'message' => 'Reporte obtenido correctamente',
-                'data' => $reporte
+                'message' => 'Agenda obtenida correctamente',
+                'data' => $agenda
             ], 200);
             
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Reporte no encontrado',
+                'message' => 'Agenda no encontrada',
                 'error' => $e->getMessage()
             ], 404);
         }

@@ -3,9 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Sanctum\HasApiTokens;
 
-class UserAccount extends Model
+class UserAccount extends Authenticatable
 {
+    use HasApiTokens;  // ← IMPORTANTE para tokens
+    
     protected $table = 'user_account';
     protected $primaryKey = 'user_account_id';
     public $timestamps = false;
@@ -24,6 +28,13 @@ class UserAccount extends Model
     protected $hidden = [
         'password_hash',
     ];
+    
+    // IMPORTANTE: Laravel espera que el campo se llame 'password'
+    // Pero nosotros usamos 'password_hash', así que lo mapeamos
+    public function getAuthPassword()
+    {
+        return $this->password_hash;
+    }
     
     // Relaciones
     public function role()

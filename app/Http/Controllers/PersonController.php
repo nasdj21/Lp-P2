@@ -38,6 +38,7 @@ class PersonController extends Controller
                     'user_account_id' => $person->userAccount->user_account_id,
                     'email' => $person->userAccount->email,
                     'role' => $person->userAccount->role->name,
+                    'status_id' => $person->userAccount->accountStatus->account_status_id,
                     'status' => $person->userAccount->accountStatus->name,
                 ],
                 'identification' => $person->identification->number ?? null,
@@ -45,7 +46,18 @@ class PersonController extends Controller
                 'occupation' => $person->occupationInfo->name ?? null,
                 'marital_status' => $person->maritalStatusInfo->name ?? null,
                 'education' => $person->educationInfo->name ?? null,
-                'country' => $person->country->name ?? null,
+                'country' => [
+                    'country_id' => $person->country->country_id ?? null,
+                    'name' => $person->country->name ?? null,
+                    'state' => [
+                        'state_id' => $person->country->state->state_id ?? null,
+                        'name' => $person->country->state->name ?? null,
+                        'city' => [
+                            'city_id' => $person->country->state->city->city_id ?? null,
+                            'name' => $person->country->state->city->name ?? null,
+                        ]
+                    ]
+                ],
                 'type' => $person->client ? 'Client' : ($person->professional ? 'Professional' : ($person->staff ? 'Staff' : null)),
                 'professional_info' => $person->professional ? [
                     'specialty' => $person->professional->specialty,

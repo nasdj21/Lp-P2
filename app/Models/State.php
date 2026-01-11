@@ -6,5 +6,23 @@ use Illuminate\Database\Eloquent\Model;
 
 class State extends Model
 {
-    //
+    protected $table = 'state';
+    protected $primaryKey = 'state_id';
+    public $timestamps = false;
+    
+    protected $fillable = [
+        'name',
+        'country_id'
+    ];
+    
+    // Relaciones
+    public function country()
+    {
+        return $this->belongsTo(Country::class, 'country_id', 'country_id');
+    }
+    
+    public function cities()
+    {
+        return $this->hasMany(City::class, 'state_id', 'state_id');
+    }
 }

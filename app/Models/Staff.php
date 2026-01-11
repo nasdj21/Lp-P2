@@ -6,5 +6,21 @@ use Illuminate\Database\Eloquent\Model;
 
 class Staff extends Model
 {
-    //
+    protected $table = 'staff';
+    protected $primaryKey = 'person_id';
+    public $incrementing = false;
+    public $timestamps = false;
+    
+    protected $fillable = [
+        'person_id',
+        'created_by',
+        'modified_by',
+        'modification_date'
+    ];
+    
+    // Relaciones
+    public function person()
+    {
+        return $this->belongsTo(Person::class, 'person_id', 'person_id');
+    }
 }

@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Appointment;
+use App\Models\Payment;
+use App\Models\Receipt;
+use Illuminate\Support\Facades\DB;
 
 class AppointmentController extends Controller
 {
@@ -88,36 +91,91 @@ class AppointmentController extends Controller
     }
 
     /**
-     * Store a newly created appointment.
+     * Store a newly created appointment with payment and receipt.
      * POST /api/appointments
+     * 
+     * Request body:
+     * {
+     *   "service_id": 1,
+     *   "client_id": 123,  // person_id del cliente
+     *   "scheduled_by": 456, // person_id de quien agenda
+     *   "worker_schedule_id": 789,
+     *   "payment_status_id": 1, // 1=Pendiente, 2=Pagado, etc.
+     *   "appointment_status_id": 1, // 1=Programada, etc.
+     *   "payment_file": "ruta/comprobante.pdf", // opcional
+     *   "created_by": "admin" // opcional
+     * }
      */
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'payment_id' => 'required|exists:payment,payment_id',
+            'service_id' => 'required|exists:service,service_id',
+            'client_id' => 'required|exists:person,person_id',
             'scheduled_by' => 'required|exists:person,person_id',
             'worker_schedule_id' => 'required|exists:worker_schedule,worker_schedule_id',
-            'status' => 'required|exists:appointment_status,status_id',
+            'payment_status_id' => 'required|exists:payment_status,status_id',
+            'appointment_status_id' => 'required|exists:appointment_status,status_id',
+            'payment_file' => 'nullable|string',
             'created_by' => 'nullable|string|max:255',
         ]);
 
-        $appointment = Appointment::create($validated);
+        DB::beginTransaction();
+        
+        try {
+            // 1. Crear el pago
+            $payment = Payment::create([
+                'person_id' => $validated['client_id'],
+                'service_id' => $validated['service_id'],
+                'status_id' => $validated['payment_status_id'],
+                'file' => $validated['payment_file'] ?? null,
+                'created_by' => $validated['created_by'] ?? 'system',
+            ]);
 
-        // Marcar el horario como no disponible
-        DB::table('worker_schedule')
-            ->where('worker_schedule_id', $validated['worker_schedule_id'])
-            ->update(['is_available' => false]);
+            // 2. Crear el recibo automáticamente
+            $receipt = Receipt::create([
+                'payment_id' => $payment->payment_id,
+                'created_by' => $validated['created_by'] ?? 'system',
+            ]);
 
-        return response()->json([
-            'message' => 'Appointment created successfully',
-            'appointment' => $appointment->load([
-                'payment.client.person',
-                'payment.service',
-                'workerSchedule.schedule',
-                'workerSchedule.person.professional',
-                'appointmentStatus'
-            ])
-        ], 201);
+            // 3. Crear la cita
+            $appointment = Appointment::create([
+                'payment_id' => $payment->payment_id,
+                'scheduled_by' => $validated['scheduled_by'],
+                'worker_schedule_id' => $validated['worker_schedule_id'],
+                'status' => $validated['appointment_status_id'],
+                'created_by' => $validated['created_by'] ?? 'system',
+            ]);
+
+            // 4. Marcar el horario como no disponible
+            DB::table('worker_schedule')
+                ->where('worker_schedule_id', $validated['worker_schedule_id'])
+                ->update(['is_available' => false]);
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Appointment, payment and receipt created successfully',
+                'appointment' => $appointment->load([
+                    'payment.client.person',
+                    'payment.service',
+                    'payment.receipt',
+                    'payment.paymentStatus',
+                    'workerSchedule.schedule',
+                    'workerSchedule.person.professional',
+                    'appointmentStatus',
+                    'scheduledByPerson'
+                ]),
+                'payment_id' => $payment->payment_id,
+                'receipt_id' => $receipt->receipt_id,
+            ], 201);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Error creating appointment',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -233,15 +291,27 @@ class AppointmentController extends Controller
     {
         $appointment = Appointment::findOrFail($id);
         
-        // Liberar el horario
-        DB::table('worker_schedule')
-            ->where('worker_schedule_id', $appointment->worker_schedule_id)
-            ->update(['is_available' => true]);
+        DB::beginTransaction();
         
-        $appointment->delete();
+        try {
+            // Liberar el horario
+            DB::table('worker_schedule')
+                ->where('worker_schedule_id', $appointment->worker_schedule_id)
+                ->update(['is_available' => true]);
+            
+            $appointment->delete();
+            
+            DB::commit();
 
-        return response()->json([
-            'message' => 'Appointment deleted successfully'
-        ]);
+            return response()->json([
+                'message' => 'Appointment deleted successfully'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Error deleting appointment',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }

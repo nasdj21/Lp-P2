@@ -45,10 +45,11 @@ class PaymentController extends Controller
                 ],
                 'file' => $payment->file,
                 'has_receipt' => $payment->receipt ? true : false,
+                /*
                 'receipt' => $payment->receipt ? [
                     'receipt_id' => $payment->receipt->receipt_id,
                     'creation_date' => $payment->receipt->creation_date,
-                ] : null,
+                ] : null,*/
                 'has_appointment' => $payment->appointment ? true : false,
                 'appointment' => $payment->appointment ? [
                     'appointment_id' => $payment->appointment->appointment_id,
@@ -119,10 +120,11 @@ class PaymentController extends Controller
             ],
             'file' => $payment->file,
             'has_receipt' => $payment->receipt ? true : false,
+            /*
             'receipt' => $payment->receipt ? [
                 'receipt_id' => $payment->receipt->receipt_id,
                 'creation_date' => $payment->receipt->creation_date,
-            ] : null,
+            ] : null,*/
             'has_appointment' => $payment->appointment ? true : false,
             'appointment' => $payment->appointment ? [
                 'appointment_id' => $payment->appointment->appointment_id,

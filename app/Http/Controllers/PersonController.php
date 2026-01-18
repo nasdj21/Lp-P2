@@ -34,9 +34,9 @@ class PersonController extends Controller
                 'last_name' => $person->last_name,
                 'birthdate' => $person->birthdate,
                 'phone' => $person->phone,
+                'email' => $person->userAccount->email,
                 'user_account' => [
-                    'user_account_id' => $person->userAccount->user_account_id,
-                    'email' => $person->userAccount->email,
+                    'user_account_id' => $person->userAccount->user_account_id,                    
                     'role' => $person->userAccount->role->name,
                     'status_id' => $person->userAccount->accountStatus->account_status_id,
                     'status' => $person->userAccount->accountStatus->name,

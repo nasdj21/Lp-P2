@@ -6,6 +6,7 @@ use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\UserAccountController;
 use App\Http\Controllers\PersonController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ServiceController;
 
 // Rutas públicas (NO requieren autenticación)
 Route::post('/login', [AuthController::class, 'login']);
@@ -22,4 +23,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('users', UserAccountController::class);
     Route::apiResource('persons', PersonController::class);
     Route::apiResource('payments', PaymentController::class);
+    Route::apiResource('service', ServiceController::class);
 });

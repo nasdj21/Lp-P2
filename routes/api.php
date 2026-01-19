@@ -11,10 +11,12 @@ use App\Http\Controllers\ProfessionalServiceController;
 use App\Http\Controllers\ProfessionalController;
 use App\Http\Controllers\ClientController; 
 use App\Http\Controllers\WorkerScheduleController;
+use App\Http\Controllers\UserRegistrationController;
 
 // Rutas públicas (NO requieren autenticación)
 Route::post('/login', [AuthController::class, 'login']);
-Route::post('/register', [AuthController::class, 'register']);
+//Route::post('/register', [AuthController::class, 'register']);
+Route::post('/register', [UserRegistrationController::class, 'registerCompleteUser']);
 
 // Rutas protegidas (requieren autenticación con Sanctum)
 Route::middleware('auth:sanctum')->group(function () {
@@ -32,6 +34,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('professionals', ProfessionalController::class);
     Route::apiResource('clients', ClientController::class);
     Route::apiResource('worker-schedules', WorkerScheduleController::class);
+    Route::put('/update-user/{user_account_id}', [UserRegistrationController::class, 'updateCompleteUser']);
 
     // Rutas personalizadas para professional-services
     Route::get('professional-services/professional/{professionalId}', [ProfessionalServiceController::class, 'getByProfessional']);

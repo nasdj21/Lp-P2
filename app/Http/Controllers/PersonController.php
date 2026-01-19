@@ -38,6 +38,7 @@ class PersonController extends Controller
                 'user_account' => [
                     'user_account_id' => $person->userAccount->user_account_id,                    
                     'role' => $person->userAccount->role->name,
+                    'role_id' => $person->userAccount->role->role_id,
                     'status_id' => $person->userAccount->accountStatus->account_status_id,
                     'status' => $person->userAccount->accountStatus->name,
                 ],

@@ -7,53 +7,83 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-## About Laravel
+## General
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Este repositorio contiene el **backend del proyecto LP-P2**, desarrollado con **Laravel** y expuesto como **API REST** para ser consumido por el frontend en React.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Incluye:
+- Autenticación con **Laravel Sanctum**
+- Gestión de servicios
+- Gestión de citas
+- Gestión de usuarios
+- Arquitectura desacoplada (API first)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## Especificaciones
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+- **Laravel** 10.x  
+- **PHP** 8.1+
+- **Composer** 2.x
+- **Laravel Sanctum**
+- **Vite**
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+## Requerimientos
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Antes de iniciar, asegúrate de tener instalado:
 
-### Premium Partners
+- PHP ≥ 8.1
+- Composer ≥ 2.0
+- Node.js ≥ 18
+- npm ≥ 9
+- Git
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### Extensiones PHP requeridas
+- openssl
+- pdo
+- pdo_sqlite / pdo_mysql
+- mbstring
+- tokenizer
+- xml
+- ctype
+- json
+- fileinfo
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Installation
 
-## Code of Conduct
+```bash
+### 1. Clonar repositorio
+git clone https://github.com/nasdj21/Lp-P2.git
+cd Lp-P2
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 2. Instalar dependencias PHP
+composer install
 
-## Security Vulnerabilities
+### 3. Crear archivo de entorno
+cp .env.example .env
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Deberia  quedar algo similar a
+DB_CONNECTION=prefered_Connection
+DB_HOST=xxx.xx.xx.x
+DB_PORT=xxx
+DB_DATABASE=prefered_database
+DB_USERNAME=prefered_database
+DB_PASSWORD=prefered_password
 
-## License
+### 4. Generar APP_KEY
+php artisan key:generate
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### 5. Migrar
+php artisan migrate
+```
+## Desplegar el Backend
+
+```bash
+php artisan serve
+```
+Api disponible en:
+http://127.0.0.1:8000

@@ -19,8 +19,7 @@ class PersonController extends Controller
             'genderInfo',
             'occupationInfo',
             'maritalStatusInfo',
-            'educationInfo',
-            'country',
+            'educationInfo',            
             'identification',
             'client',
             'professional.services',
@@ -46,19 +45,7 @@ class PersonController extends Controller
                 'gender' => $person->genderInfo->name ?? null,
                 'occupation' => $person->occupationInfo->name ?? null,
                 'marital_status' => $person->maritalStatusInfo->name ?? null,
-                'education' => $person->educationInfo->name ?? null,
-                'country' => [
-                    'country_id' => $person->country->country_id ?? null,
-                    'name' => $person->country->name ?? null,
-                    'state' => [
-                        'state_id' => $person->country->state->state_id ?? null,
-                        'name' => $person->country->state->name ?? null,
-                        'city' => [
-                            'city_id' => $person->country->state->city->city_id ?? null,
-                            'name' => $person->country->state->city->name ?? null,
-                        ]
-                    ]
-                ],
+                'education' => $person->educationInfo->name ?? null,                
                 'type' => $person->client ? 'Client' : ($person->professional ? 'Professional' : ($person->staff ? 'Staff' : null)),
                 'professional_info' => $person->professional ? [
                     'specialty' => $person->professional->specialty,
@@ -92,8 +79,7 @@ class PersonController extends Controller
             'occupation' => 'required|exists:occupation,occupation_id',
             'marital_status' => 'required|exists:marital_status,marital_status_id',
             'education' => 'required|exists:education,education_id',
-            'phone' => 'required|string|regex:/^\d{8,10}$/',
-            'country_id' => 'nullable|exists:country,country_id',
+            'phone' => 'required|string|regex:/^\d{8,10}$/',            
             'created_by' => 'nullable|string|max:255',
         ]);
 
@@ -106,8 +92,7 @@ class PersonController extends Controller
                 'genderInfo',
                 'occupationInfo',
                 'maritalStatusInfo',
-                'educationInfo',
-                'country'
+                'educationInfo',                
             ])
         ], 201);
     }
@@ -124,8 +109,7 @@ class PersonController extends Controller
             'genderInfo',
             'occupationInfo',
             'maritalStatusInfo',
-            'educationInfo',
-            'country',
+            'educationInfo',            
             'identification',
             'client',
             'professional.services',
@@ -148,8 +132,7 @@ class PersonController extends Controller
             'gender' => $person->genderInfo->name ?? null,
             'occupation' => $person->occupationInfo->name ?? null,
             'marital_status' => $person->maritalStatusInfo->name ?? null,
-            'education' => $person->educationInfo->name ?? null,
-            'country' => $person->country->name ?? null,
+            'education' => $person->educationInfo->name ?? null,            
             'type' => $person->client ? 'Client' : ($person->professional ? 'Professional' : ($person->staff ? 'Staff' : null)),
             'professional_info' => $person->professional ? [
                 'specialty' => $person->professional->specialty,
@@ -183,8 +166,7 @@ class PersonController extends Controller
             'occupation' => 'sometimes|exists:occupation,occupation_id',
             'marital_status' => 'sometimes|exists:marital_status,marital_status_id',
             'education' => 'sometimes|exists:education,education_id',
-            'phone' => 'sometimes|string|regex:/^\d{8,10}$/',
-            'country_id' => 'sometimes|nullable|exists:country,country_id',
+            'phone' => 'sometimes|string|regex:/^\d{8,10}$/',            
             'modified_by' => 'nullable|string|max:255',
         ]);
 
@@ -198,8 +180,7 @@ class PersonController extends Controller
                 'genderInfo',
                 'occupationInfo',
                 'maritalStatusInfo',
-                'educationInfo',
-                'country'
+                'educationInfo',                
             ])
         ]);
     }

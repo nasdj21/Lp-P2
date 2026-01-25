@@ -27,11 +27,6 @@ class DatabaseSeeder extends Seeder
             MaritalStatusSeeder::class,
             EducationSeeder::class,
             
-            // Ubicaciones
-            CountrySeeder::class,
-            StateSeeder::class,
-            CitySeeder::class,
-            
             // Usuarios y personas
             UserSeeder::class,
             

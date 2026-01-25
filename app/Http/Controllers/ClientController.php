@@ -21,7 +21,6 @@ class ClientController extends Controller
             'person.occupationInfo',
             'person.maritalStatusInfo',
             'person.educationInfo',
-            'person.country',
             'person.identification',
         ])->get();
 
@@ -40,7 +39,6 @@ class ClientController extends Controller
                     'occupation' => $person->occupationInfo->name ?? null,
                     'marital_status' => $person->maritalStatusInfo->name ?? null,
                     'education' => $person->educationInfo->name ?? null,
-                    'country' => $person->country->name ?? null,
                 ],
                 'user_account' => [
                     'user_account_id' => $person->userAccount->user_account_id,
@@ -104,7 +102,6 @@ class ClientController extends Controller
             'person.occupationInfo',
             'person.maritalStatusInfo',
             'person.educationInfo',
-            'person.country',
             'person.identification',
         ])->findOrFail($id);
 
@@ -122,7 +119,6 @@ class ClientController extends Controller
                 'occupation' => $person->occupationInfo->name ?? null,
                 'marital_status' => $person->maritalStatusInfo->name ?? null,
                 'education' => $person->educationInfo->name ?? null,
-                'country' => $person->country->name ?? null,
             ],
             'user_account' => [
                 'user_account_id' => $person->userAccount->user_account_id,

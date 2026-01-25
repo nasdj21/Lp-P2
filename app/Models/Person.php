@@ -19,8 +19,7 @@ class Person extends Model
         'occupation',
         'marital_status',
         'education',
-        'phone',
-        'country_id',
+        'phone',        
         'created_by',
         'modified_by',
         'modification_date'
@@ -51,12 +50,7 @@ class Person extends Model
     {
         return $this->belongsTo(Education::class, 'education', 'education_id');
     }
-    
-    public function country()
-    {
-        return $this->belongsTo(Country::class, 'country_id', 'country_id');
-    }
-    
+        
     public function identification()
     {
         return $this->hasOne(Identification::class, 'person_id', 'person_id');

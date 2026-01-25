@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Models\Appointment;
 use App\Models\Payment;
 use App\Models\Receipt;
-use Illuminate\Support\Facades\DB;
 
 class AppointmentController extends Controller
 {
@@ -27,8 +27,7 @@ class AppointmentController extends Controller
             'workerSchedule.person.professional',
             'workerSchedule.person.userAccount',
             'appointmentStatus',
-            'scheduledByPerson.userAccount.role',
-            'report'
+            'scheduledByPerson.userAccount.role',            
         ])->get();
 
         return response()->json($appointments->map(function ($appointment) {
@@ -78,10 +77,6 @@ class AppointmentController extends Controller
                     'last_name' => $appointment->scheduledByPerson->last_name,
                     'role' => $appointment->scheduledByPerson->userAccount->role->name ?? null,
                 ],
-                'report' => $appointment->report ? [
-                    'appointment_report_id' => $appointment->report->appointment_report_id,
-                    'file' => $appointment->report->file,
-                ] : null,
                 'created_by' => $appointment->created_by,
                 'creation_date' => $appointment->creation_date,
                 'modified_by' => $appointment->modified_by,
@@ -195,8 +190,7 @@ class AppointmentController extends Controller
             'workerSchedule.person.professional',
             'workerSchedule.person.userAccount',
             'appointmentStatus',
-            'scheduledByPerson.userAccount.role',
-            'report'
+            'scheduledByPerson.userAccount.role',            
         ])->findOrFail($id);
 
         return response()->json([
@@ -245,10 +239,6 @@ class AppointmentController extends Controller
                 'last_name' => $appointment->scheduledByPerson->last_name,
                 'role' => $appointment->scheduledByPerson->userAccount->role->name ?? null,
             ],
-            'report' => $appointment->report ? [
-                'appointment_report_id' => $appointment->report->appointment_report_id,
-                'file' => $appointment->report->file,
-            ] : null,
             'created_by' => $appointment->created_by,
             'creation_date' => $appointment->creation_date,
             'modified_by' => $appointment->modified_by,

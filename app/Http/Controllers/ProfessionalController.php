@@ -21,7 +21,6 @@ class ProfessionalController extends Controller
             'person.occupationInfo',
             'person.maritalStatusInfo',
             'person.educationInfo',
-            'person.country',
             'person.identification',
             'professionalServices.service',
         ])->get();
@@ -108,8 +107,7 @@ class ProfessionalController extends Controller
             'person.genderInfo',
             'person.occupationInfo',
             'person.maritalStatusInfo',
-            'person.educationInfo',
-            'person.country',
+            'person.educationInfo',            
             'person.identification',
             'professionalServices.service',
         ])->findOrFail($id);
@@ -129,8 +127,7 @@ class ProfessionalController extends Controller
                 'gender' => $person->genderInfo->name ?? null,
                 'occupation' => $person->occupationInfo->name ?? null,
                 'marital_status' => $person->maritalStatusInfo->name ?? null,
-                'education' => $person->educationInfo->name ?? null,
-                'country' => $person->country->name ?? null,
+                'education' => $person->educationInfo->name ?? null,                
             ],
             'user_account' => [
                 'user_account_id' => $person->userAccount->user_account_id,
@@ -200,99 +197,5 @@ class ProfessionalController extends Controller
         return response()->json([
             'message' => 'Professional deleted successfully'
         ]);
-    }
-
-    /**
-     * Get professionals by specialty.
-     * GET /api/professionals/specialty/{specialty}
-     */
-    public function getBySpecialty(string $specialty)
-    {
-        $professionals = Professional::with([
-            'person.userAccount',
-            'person.identification',
-            'professionalServices.service',
-        ])->where('specialty', 'LIKE', '%' . $specialty . '%')
-            ->get();
-
-        return response()->json($professionals->map(function ($professional) {
-            return [
-                'person_id' => $professional->person_id,
-                'first_name' => $professional->person->first_name,
-                'last_name' => $professional->person->last_name,
-                'email' => $professional->person->userAccount->email ?? null,
-                'phone' => $professional->person->phone,
-                'specialty' => $professional->specialty,
-                'title' => $professional->title,
-                'identification' => $professional->person->identification->number ?? null,
-                'services' => $professional->professionalServices->map(function ($ps) {
-                    return [
-                        'service_id' => $ps->service->service_id,
-                        'name' => $ps->service->name,
-                        'price' => $ps->service->price,
-                    ];
-                }),
-            ];
-        }));
-    }
-
-    /**
-     * Get professionals available for a service.
-     * GET /api/professionals/service/{serviceId}
-     */
-    public function getByService(string $serviceId)
-    {
-        $professionals = Professional::with([
-            'person.userAccount',
-            'person.identification',
-        ])->whereHas('professionalServices', function ($query) use ($serviceId) {
-            $query->where('service_id', $serviceId);
-        })->get();
-
-        return response()->json($professionals->map(function ($professional) {
-            return [
-                'person_id' => $professional->person_id,
-                'first_name' => $professional->person->first_name,
-                'last_name' => $professional->person->last_name,
-                'email' => $professional->person->userAccount->email ?? null,
-                'phone' => $professional->person->phone,
-                'specialty' => $professional->specialty,
-                'title' => $professional->title,
-                'identification' => $professional->person->identification->number ?? null,
-            ];
-        }));
-    }
-
-    /**
-     * Get professionals with their statistics.
-     * GET /api/professionals/statistics
-     */
-    public function getStatistics()
-    {
-        $professionals = Professional::with([
-            'person.userAccount',
-            'professionalServices.service',
-            'person.workerSchedules.appointment',
-        ])->get();
-
-        return response()->json($professionals->map(function ($professional) {
-            $completedAppointments = $professional->person->workerSchedules
-                ->flatMap(function ($ws) {
-                    return $ws->appointment ? [$ws->appointment] : [];
-                })
-                ->where('status', 2) // Status 2 = Completed
-                ->count();
-
-            return [
-                'person_id' => $professional->person_id,
-                'first_name' => $professional->person->first_name,
-                'last_name' => $professional->person->last_name,
-                'email' => $professional->person->userAccount->email ?? null,
-                'specialty' => $professional->specialty,
-                'title' => $professional->title,
-                'total_services' => $professional->professionalServices->count(),
-                'total_appointments_completed' => $completedAppointments,
-            ];
-        }));
     }
 }

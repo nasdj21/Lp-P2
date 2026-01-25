@@ -85,28 +85,6 @@ class AppointmentSeeder extends Seeder
             'created_by' => 'system',
             'creation_date' => now()
             ],
-        ]);
-        // Insertar reportes de citas
-        DB::table('appointment_report')->insert([
-            [
-                'appointment_id' => 1,
-                'file' => 'proximamente',
-                'created_by' => 'system',
-                'creation_date' => now()
-            ],
-            [
-                'appointment_id' => 2,
-                'file' => 'proximamente',
-                'created_by' => 'system',
-                'creation_date' => now()
-            ],
-            [
-                'appointment_id' => 3,
-                'file' => 'proximamente',
-                'created_by' => 'system',
-                'creation_date' => now()
-            ],
-        ]);
-
+        ]);        
     }
 }

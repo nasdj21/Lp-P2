@@ -40,9 +40,4 @@ class Appointment extends Model
     {
         return $this->belongsTo(AppointmentStatus::class, 'status', 'status_id');
     }
-    
-    public function report()
-    {
-        return $this->hasOne(AppointmentReport::class, 'appointment_id', 'appointment_id');
-    }
 }

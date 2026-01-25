@@ -21,8 +21,7 @@ return new class extends Migration
             $table->unsignedBigInteger('occupation');
             $table->unsignedBigInteger('marital_status');
             $table->unsignedBigInteger('education');
-            $table->string('phone', 10);
-            $table->unsignedBigInteger('country_id')->nullable();
+            $table->string('phone', 10);            
             $table->string('created_by', 255)->default('system');
             $table->string('modified_by', 255)->nullable();
             $table->timestamp('creation_date')->useCurrent();
@@ -32,15 +31,13 @@ return new class extends Migration
             $table->foreign('gender')->references('gender_id')->on('gender')->onDelete('cascade');
             $table->foreign('occupation')->references('occupation_id')->on('occupation')->onDelete('cascade');
             $table->foreign('marital_status')->references('marital_status_id')->on('marital_status')->onDelete('cascade');
-            $table->foreign('education')->references('education_id')->on('education')->onDelete('cascade');
-            $table->foreign('country_id')->references('country_id')->on('country')->onDelete('set null');
+            $table->foreign('education')->references('education_id')->on('education')->onDelete('cascade');            
             
             $table->index('user_account_id');
             $table->index('gender');
             $table->index('occupation');
             $table->index('marital_status');
-            $table->index('education');
-            $table->index('country_id');
+            $table->index('education');            
         });
 
         // Constraints de validación

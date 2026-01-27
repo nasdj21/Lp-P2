@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers; //Define la ubicación de la clase
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -11,7 +11,7 @@ use App\Models\Receipt;
 class AppointmentController extends Controller
 {
     /**
-     * Display a listing of appointments with full details.
+     * Hace un GET de todas las citas y las guarda en un map
      * GET /api/appointments
      */
     public function index()
@@ -100,10 +100,12 @@ class AppointmentController extends Controller
      *   "payment_file": "ruta/comprobante.pdf", // opcional
      *   "created_by": "admin" // opcional
      * }
+     * 
      */
     public function store(Request $request)
     {
         $validated = $request->validate([
+            //El store asegura que todos los argumentos (excepto payment_fule y created_by) ya existan en las tablas
             'service_id' => 'required|exists:service,service_id',
             'client_id' => 'required|exists:person,person_id',
             'scheduled_by' => 'required|exists:person,person_id',
@@ -114,6 +116,7 @@ class AppointmentController extends Controller
             'created_by' => 'nullable|string|max:255',
         ]);
 
+        //Se avisa al DB que empezará a guardar una transacción, en caso de que cualquier error ocurra, se pueda hacer callback
         DB::beginTransaction();
         
         try {
@@ -144,12 +147,13 @@ class AppointmentController extends Controller
             // 4. Marcar el horario como no disponible
             DB::table('worker_schedule')
                 ->where('worker_schedule_id', $validated['worker_schedule_id'])
-                ->update(['is_available' => false]);
+                ->update(['is_available' => false]); //Indica que ese horario está bloqueado ahora
 
             DB::commit();
 
             return response()->json([
                 'message' => 'Appointment, payment and receipt created successfully',
+                //Guarda el appointment
                 'appointment' => $appointment->load([
                     'payment.client.person',
                     'payment.service',
@@ -174,7 +178,7 @@ class AppointmentController extends Controller
     }
 
     /**
-     * Display the specified appointment.
+     * Muestra la cita específica (cuyo id sea igual al argumentoenviado).
      * GET /api/appointments/{id}
      */
     public function show(string $id)
@@ -191,7 +195,7 @@ class AppointmentController extends Controller
             'workerSchedule.person.userAccount',
             'appointmentStatus',
             'scheduledByPerson.userAccount.role',            
-        ])->findOrFail($id);
+        ])->findOrFail($id); //Si no existe ese id, automaticamente envia un error 404
 
         return response()->json([
             'appointment_id' => $appointment->appointment_id,
@@ -247,18 +251,21 @@ class AppointmentController extends Controller
     }
 
     /**
-     * Update the specified appointment.
+     * Actualiza la cita indicada en el argumento.
      * PUT/PATCH /api/appointments/{id}
      */
     public function update(Request $request, string $id)
     {
+        //Se valida primero que la cita exista
         $appointment = Appointment::findOrFail($id);
 
+        //Se valida que la cita es apta para modificar
         $validated = $request->validate([
             'status' => 'sometimes|exists:appointment_status,status_id',
             'modified_by' => 'nullable|string|max:255',
         ]);
 
+        //Cambia el modification date a ahorita
         $validated['modification_date'] = now();
         $appointment->update($validated);
 
@@ -274,13 +281,15 @@ class AppointmentController extends Controller
     }
 
     /**
-     * Remove the specified appointment.
+     * Elimina la cita indicada.
      * DELETE /api/appointments/{id}
      */
     public function destroy(string $id)
     {
+        //Se valida primero que la cita exista
         $appointment = Appointment::findOrFail($id);
         
+        //Se avisa al DB que empezará a guardar una transacción, en caso de que cualquier error ocurra, se pueda hacer callback
         DB::beginTransaction();
         
         try {
@@ -289,9 +298,9 @@ class AppointmentController extends Controller
                 ->where('worker_schedule_id', $appointment->worker_schedule_id)
                 ->update(['is_available' => true]);
             
-            $appointment->delete();
+            $appointment->delete(); //Elimina la cita
             
-            DB::commit();
+            DB::commit(); //Envia los cambios a la base de datos
 
             return response()->json([
                 'message' => 'Appointment deleted successfully'
